@@ -83,16 +83,14 @@ def open_chrome(url, profile_directory, position, size):
                 play_button.click()
                 print("Clicked Play button.")
                 print("Game Started.")
-                time.sleep(1)
                 
                 canvas = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'canvas')))
                 print("Canvas found. Starting to click...")
-                time.sleep(1)
                 end_time = time.time() + 45  # Set end time for 45 seconds
                 while time.time() < end_time:
                     try:
                         # Check if the canvas is still present
-                        canvas = WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.TAG_NAME, 'canvas')))
+                        canvas = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, 'canvas')))
                         
                         # Perform click action
                         canvas.click()
@@ -180,7 +178,6 @@ finally:
     for driver in drivers:
         try:
             driver.quit()
-            driver.remove(driver)
             print("Closed Chrome session.")
         except Exception as e:
             print(f"Error closing Chrome session: {e}")
