@@ -87,7 +87,7 @@ def open_chrome(url, profile_directory, position, size):
                 
                 canvas = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'canvas')))
                 print("Canvas found. Starting to click...")
-
+                time.sleep(1)
                 end_time = time.time() + 45  # Set end time for 45 seconds
                 while time.time() < end_time:
                     try:
@@ -117,7 +117,7 @@ def open_chrome(url, profile_directory, position, size):
                 
             print("No more attempts left. Returning to main page.")
             print("Sleeping for 40 minutes...")
-            time.sleep(420)  # 40 minutes sleep
+            time.sleep(2400)  # 40 minutes sleep
 
         else:
             print("Play button not found.")
@@ -174,7 +174,7 @@ finally:
     # Quit all active ChromeDriver instances
     for driver in drivers:
         try:
-            #driver.quit()
+            driver.quit()
             print("Closed Chrome session.")
         except Exception as e:
             print(f"Error closing Chrome session: {e}")
