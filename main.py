@@ -115,9 +115,13 @@ def open_chrome(url, profile_directory, position, size):
                 balance = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.bn-flex.Game_entry__info__15l1V > div.Game_entry__coin__33Nan'))).text
                 print(f"Remaining attempts: {remaining_attempts} and Balance: {balance}")
                 
-            print("No more attempts left. Returning to main page.")
-            print("Sleeping for 40 minutes...")
-            time.sleep(2400)  # 40 minutes sleep
+            print("No more attempts left. Quitting Chrome...")
+            driver.quit()  # Quit the driver when no attempts left
+            drivers.remove(driver)  # Remove from the global list
+            print(f"Sleeping for {config['sleep_time']} minutes...")
+            time.sleep(config['sleep_time'] * 60)  # Sleep for the defined period (in seconds)
+            print("Relaunching Chrome...")
+            open_chrome(url, profile_directory, position, size)  # Relaunch
 
         else:
             print("Play button not found.")
@@ -170,11 +174,13 @@ try:
     
 except KeyboardInterrupt:
     print("Keyboard Interrupted")
+    
 finally:
     # Quit all active ChromeDriver instances
     for driver in drivers:
         try:
             driver.quit()
+            driver.remove(driver)
             print("Closed Chrome session.")
         except Exception as e:
             print(f"Error closing Chrome session: {e}")

@@ -3,6 +3,6 @@ config={
     "url" : "https://www.binance.com/en/game/tg/moon-bix#tgWebAppData=XXX", #replace with yours binance bot ifram url
     "profile_url" : "/Users/JonnySin/Library/Application Support/Google/Chrome/Default", #your chrome profile directory , this is mac example /Users/JonnySin/Library/Application Support/Google/Chrome/Default,for windows idk :v
     "sleep_time" : 40, #sleep time after there is no attempt left
-    "click_delay" : random.uniform(2, 3), #drag gold delay
+    "click_delay" : random.randint(3, 5), #drag gold delay
     "headless" : False, #Set it to true if you dont want to see chrome page and sound
 }
