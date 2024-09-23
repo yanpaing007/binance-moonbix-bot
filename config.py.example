@@ -1,6 +1,6 @@
 import random
 config={
-    "url" : "https://www.binance.com/en/game/tg/moon-bix#tgWebAppData=XXX", #replace with yours binance bot ifram url
+    "url" : "https://www.binance.com/en/game/tg/moon-bix#tgWebAppData=XXX", #replace with yours binance bot iframe url
     "profile_url" : "", #your chrome profile directory , leave it empty if you don't want to use certain chrome profile
     "sleep_time" : 40, #sleep time after there is no attempt left
     "click_delay" : random.uniform(1.5, 3), #drag gold delay

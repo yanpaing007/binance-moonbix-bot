@@ -1,5 +1,7 @@
 ## Setup
 
+- [BotLink](https://t.me/Binance_Moonbix_bot/start?startApp=ref_5612706767&startapp=ref_5612706767&utm_medium=web_share_copy)
+
 1. Clone the repository:
     ```sh
     git clone https://github.com/yanpaing007/binance-moonbix-bot.git
@@ -21,6 +23,10 @@
     ```sh
     cp config.py.example config.py
     ```
+## How to get bot iframe URL
+- Go to binance bot
+- Inspect the page and click binance bot to find <ifram src="your link">
+- Copy the link and paste it in the config.py
 
 ## Usage
 
