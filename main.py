@@ -8,6 +8,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.proxy import Proxy
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import selenium.common.exceptions as selenium_exceptions
 from config import config
 import logging
@@ -53,7 +55,7 @@ def open_chrome(url, profile_directory, position, size):
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
     
-    driver = webdriver.Chrome(options=options)
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
     drivers.append(driver)  # Add driver to the global list for cleanup
     print("..........................")
 
@@ -88,13 +90,9 @@ def open_chrome(url, profile_directory, position, size):
                         # Check if the canvas is still present
                         canvas = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, 'canvas')))
                         # Perform click action
-                        if canvas:
-                            time.sleep(config["click_delay"])
-                            canvas.click()
-                            time.sleep(config["after_click_delay"])
-                        else:
-                            logger.warning("Canvas not found, stopping clicks.")
-                            break
+                        time.sleep(config["click_delay"])
+                        canvas.click()
+                        time.sleep(config["after_click_delay"])
                         
                         # Sleep for the specified delay before the next click
                     except selenium_exceptions.TimeoutException:

@@ -1,3 +1,7 @@
+## Example
+
+![Example From Terminal](img/image.png)
+
 ## Setup
 
 - [BotLink](https://t.me/Binance_Moonbix_bot/start?startApp=ref_5612706767&startapp=ref_5612706767&utm_medium=web_share_copy)
@@ -16,7 +20,7 @@
 
 3. Install the required dependencies:
     ```sh
-    pip install selenium colorlog
+    pip install -r requirements.txt
     ```
 
 4. Copy [config.py.example]() and update the configuration as needed:
