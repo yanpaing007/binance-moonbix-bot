@@ -131,7 +131,7 @@ def open_chrome(url, profile_directory, position, size):
             return
 
     except Exception as e:
-        logger.error("Error:", e)
+        logger.error(f"Error: {e}" )
     finally:
         logger.error("Exiting...")
 
