@@ -16,7 +16,7 @@
 
 3. Install the required dependencies:
     ```sh
-    pip install selenium
+    pip install selenium colorlog
     ```
 
 4. Copy [config.py.example]() and update the configuration as needed:
