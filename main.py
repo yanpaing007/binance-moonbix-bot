@@ -10,32 +10,28 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.proxy import Proxy
 import selenium.common.exceptions as selenium_exceptions
 from config import config
+import logging
+import colorlog
+
+handler = colorlog.StreamHandler()
+handler.setFormatter(colorlog.ColoredFormatter(
+    '%(asctime)s - %(log_color)s(%(levelname)s)%(reset)s - %(message)s',
+    log_colors={
+        'DEBUG': 'cyan',
+        'INFO': 'green',
+        'WARNING': 'yellow',
+        'ERROR': 'red',
+        'CRITICAL': 'red,bg_white',
+    },
+     datefmt='%Y-%m-%d %H:%M:%S'
+))
+
+logger = colorlog.getLogger('selenium-automation')
+logger.addHandler(handler)
+logger.setLevel(logging.DEBUG)
 
 drivers = []  # Keep track of all driver instances
 
-def human_like_delay(min_delay=1, max_delay=3):
-    time.sleep(random.uniform(min_delay, max_delay))
-
-def human_like_move_and_click(driver, element):
-    try:
-        # Move mouse smoothly to the element
-        actions = ActionChains(driver)
-        actions.move_to_element(element).perform()
-        human_like_delay(0.5, 1.5)  # Slight delay before clicking
-        element.click()
-        human_like_delay(1, 2)  # Slight delay after clicking
-    except selenium_exceptions.WebDriverException as e:
-        print(f"Error during human-like move and click: {e}")
-
-def wait_and_click(driver, by, identifier, timeout, name):
-    try:
-        element = WebDriverWait(driver, timeout).until(EC.element_to_be_clickable((by, identifier)))
-        human_like_move_and_click(driver, element)
-        print(f"Clicked {name}")
-        return True
-    except (selenium_exceptions.TimeoutException, selenium_exceptions.WebDriverException) as e:
-        print(f"Error while clicking {identifier}:")
-        return False
 
 def open_chrome(url, profile_directory, position, size):
     global drivers
@@ -69,7 +65,7 @@ def open_chrome(url, profile_directory, position, size):
         attempt = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="__APP"]/div/div[1]/div/div[2]/div[2]/div[3]/div[2]')))
         remaining_attempts = int(attempt.text.split('/')[0])
         balance = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.bn-flex.Game_entry__info__15l1V > div.Game_entry__coin__33Nan'))).text
-        print(f"Remaining attempts: {remaining_attempts} and Balance: {balance}")
+        logger.info(f"Remaining attempts: {remaining_attempts} and Balance: {balance}")
         
         play_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "Game_entry__playBtn__1Gi2c")))
 
@@ -81,11 +77,11 @@ def open_chrome(url, profile_directory, position, size):
             while remaining_attempts > 0:
                 play_button = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "Game_entry__playBtn__1Gi2c")))
                 play_button.click()
-                print("Clicked Play button.")
-                print("Game Started.")
+                logger.info("Clicked Play button.")
+                logger.info("Game Started.")
                 
                 canvas = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, 'canvas')))
-                print("Canvas found. Starting to click...")
+                logger.info("Canvas found. Starting to click...")
                 end_time = time.time() + 45  # Set end time for 45 seconds
                 while time.time() < end_time:
                     try:
@@ -95,57 +91,56 @@ def open_chrome(url, profile_directory, position, size):
                         if canvas:
                             time.sleep(config["click_delay"])
                             canvas.click()
-                            time.sleep(config["click_delay"])
                             time.sleep(config["after_click_delay"])
                         else:
-                            print("Canvas not found, stopping clicks.")
+                            logger.warning("Canvas not found, stopping clicks.")
                             break
                         
                         # Sleep for the specified delay before the next click
                     except selenium_exceptions.TimeoutException:
-                        print("Canvas not found, stopping clicks.")
+                        logger.warning("Canvas not found, stopping clicks.")
                         break
                     
-                print("Game completed,going back to main...")
+                logger.info("Game completed,going back to main...")
                 time.sleep(2)
-                print("Fetching reward amount...")
+                logger.info("Fetching reward amount...")
                 reward = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'text-5xl'))).text
                 if reward:
-                    print(f"Reward for current round: {reward}")
+                    logger.info(f"Reward for current round: {reward}")
                 else:
-                    print("Reward not found.")
+                    logger.info("Reward not found.")
                 WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#__APP > div > div > div > svg'))).click()
                 # Fetch remaining attempts again after game completes
-                print("Sleeping for two seconds before fetching attempts...")
+                logger.info("Sleeping for two seconds before fetching attempts...")
                 time.sleep(2)
                 attempt = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.XPATH, '//*[@id="__APP"]/div/div[1]/div/div[2]/div[2]/div[3]/div[2]')))
                 remaining_attempts = int(attempt.text.split('/')[0])
                 balance = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, 'div.bn-flex.Game_entry__info__15l1V > div.Game_entry__coin__33Nan'))).text
-                print(f"Remaining attempts: {remaining_attempts} and Balance: {balance}")
+                logger.info(f"Remaining attempts: {remaining_attempts} and Balance: {balance}")
                 
-            print("No more attempts left. Quitting Chrome...")
+            logger.warning("No more attempts left. Quitting Chrome...")
             driver.quit()  # Quit the driver when no attempts left
             drivers.remove(driver)  # Remove from the global list
-            print(f"Sleeping for {config['sleep_time']} minutes...")
+            logger.warning(f"Sleeping for {config['sleep_time']} minutes...")
             time.sleep(config['sleep_time'] * 60)  # Sleep for the defined period (in seconds)
-            print("Relaunching Chrome...")
+            logger.warning("Relaunching Chrome...")
             open_chrome(url, profile_directory, position, size)  # Relaunch
 
         else:
-            print("Play button not found.")
+            logger.warning("Play button not found.")
             return
 
     except Exception as e:
-        print("Error:", e)
+        logger.error("Error:", e)
     finally:
-        human_like_delay(1)
+        logger.error("Exiting...")
 
 def launch_profile(url, profile_directory, position, size, delay):
     try:
         time.sleep(delay)
         open_chrome(url, profile_directory, position, size)
     except Exception as e:
-        print(f"Error in launch_profile function: {e}")
+        logger.error(f"Error in launch_profile function: {e}")
         
 try:
     url = config["url"]
@@ -181,15 +176,15 @@ try:
         thread.join()
     
 except KeyboardInterrupt:
-    print("Keyboard Interrupted")
+    logger.warning("Keyboard Interrupted")
     
 finally:
     # Quit all active ChromeDriver instances
     for driver in drivers:
         try:
             driver.quit()
-            print("Closed Chrome session.")
+            logger.warning("Closed Chrome session.")
         except Exception as e:
-            print(f"Error closing Chrome session: {e}")
+            logger.warning(f"Error closing Chrome session: {e}")
 
-    print("Exiting...")
+    logger.warning("Exiting...")
