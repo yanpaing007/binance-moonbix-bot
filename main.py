@@ -91,10 +91,16 @@ def open_chrome(url, profile_directory, position, size):
                     try:
                         # Check if the canvas is still present
                         canvas = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, 'canvas')))
-                        time.sleep(config["click_delay"])
                         # Perform click action
-                        canvas.click()
-                        print("Clicked on canvas.")
+                        if canvas:
+                            
+                            canvas.click()
+                            time.sleep(config["click_delay"])
+                            print("Clicked on canvas.")
+                            time.sleep(config["after_click_delay"])
+                        else:
+                            print("Canvas not found, stopping clicks.")
+                            break
                         
                         # Sleep for the specified delay before the next click
                     except selenium_exceptions.TimeoutException:

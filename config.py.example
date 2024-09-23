@@ -4,5 +4,6 @@ config={
     "profile_url" : "", #your chrome profile directory , leave it empty if you don't want to use certain chrome profile
     "sleep_time" : 40, #sleep time after there is no attempt left
     "click_delay" : random.uniform(1.5, 3), #drag gold delay
-    "headless" : False, #Set it to true if you dont want to see chrome page and sound
+    "after_click_delay" : random.uniform(0.5, 1),
+    "headless" : False, #Set it to true if you don't want to see chrome page and sound
 }
