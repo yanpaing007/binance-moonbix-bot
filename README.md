@@ -25,7 +25,7 @@
     ```
 ## How to get bot iframe URL
 - Go to binance bot
-- Inspect the page and click binance bot to find <ifram src="your link">
+- Inspect the page and with selector click binance bot to find {ifram src="your link}
 - Copy the link and paste it in the config.py
 
 ## Usage
