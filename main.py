@@ -93,10 +93,9 @@ def open_chrome(url, profile_directory, position, size):
                         canvas = WebDriverWait(driver, 20).until(EC.presence_of_element_located((By.TAG_NAME, 'canvas')))
                         # Perform click action
                         if canvas:
-                            
+                            time.sleep(config["click_delay"])
                             canvas.click()
                             time.sleep(config["click_delay"])
-                            print("Clicked on canvas.")
                             time.sleep(config["after_click_delay"])
                         else:
                             print("Canvas not found, stopping clicks.")
@@ -109,6 +108,12 @@ def open_chrome(url, profile_directory, position, size):
                     
                 print("Game completed,going back to main...")
                 time.sleep(2)
+                print("Fetching reward amount...")
+                reward = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CLASS_NAME, 'text-5xl'))).text
+                if reward:
+                    print(f"Reward for current round: {reward}")
+                else:
+                    print("Reward not found.")
                 WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, '#__APP > div > div > div > svg'))).click()
                 # Fetch remaining attempts again after game completes
                 print("Sleeping for two seconds before fetching attempts...")
