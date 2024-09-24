@@ -132,6 +132,11 @@ def open_chrome(url, profile_directory, position, size):
         logger.error(f"Error: {e}" )
     finally:
         logger.error("Exiting...")
+        driver.quit()  # Quit the driver when no attempts left
+        drivers.remove(driver)
+        time.sleep(60)  # Sleep for the defined period (in seconds)
+        logger.warning("Relaunching Chrome...")
+        open_chrome(url, profile_directory, position, size)
 
 def launch_profile(url, profile_directory, position, size, delay):
     try:
